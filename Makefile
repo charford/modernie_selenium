@@ -1,6 +1,6 @@
 all: fetch fetch_vms
 
-fetch: Tools/selenium_conf/selenium-server-standalone.jar Tools/deuac.iso Tools/selenium_conf/IEDriverServer.exe Tools/jre-windows-i586.exe Tools/firefox.exe Tools/chrome.exe
+fetch: Tools/selenium_conf/selenium-server-standalone.jar Tools/deuac.iso Tools/selenium_conf/IEDriverServer_32.exe Tools/selenium_conf/IEDriverServer_64.exe Tools/jre-windows-i586.exe Tools/firefox.exe Tools/chrome.exe Tools/selenium_conf/chromedriver.exe
 
 fetch_vms: VMs/IE11\ -\ Win7.ova VMs/IE8\ -\ Win7.ova VMs/IE10\ -\ Win7.ova VMs/IE9\ -\ Win7.ova
 
@@ -44,10 +44,14 @@ Tools/selenium_conf/selenium-server-standalone.jar:
 Tools/deuac.iso:
 	curl -o Tools/deuac.iso -L https://github.com/tka/SeleniumBox/blob/master/deuac.iso?raw=true
 
-Tools/selenium_conf/IEDriverServer.exe:
-	curl -o Tools/selenium_conf/IEDriverServer.zip -L http://selenium-release.storage.googleapis.com/2.44/IEDriverServer_Win32_2.44.0.zip
-	#curl -o Tools/selenium_conf/IEDriverServer.zip -L http://selenium-release.storage.googleapis.com/2.44/IEDriverServer_x64_2.44.0.zip
-	cd Tools/selenium_conf && unzip IEDriverServer.zip
+Tools/selenium_conf/IEDriverServer_32.exe:
+	curl -o Tools/selenium_conf/IEDriverServer_32.zip -L http://selenium-release.storage.googleapis.com/2.44/IEDriverServer_Win32_2.44.0.zip
+	cd Tools/selenium_conf && unzip IEDriverServer_32.zip && mv IEDriverServer.exe IEDriverServer_32.exe && rm IEDriverServer_32.zip
+
+Tools/selenium_conf/IEDriverServer_64.exe:
+	curl -o Tools/selenium_conf/IEDriverServer_64.zip -L http://selenium-release.storage.googleapis.com/2.44/IEDriverServer_x64_2.44.0.zip
+	cd Tools/selenium_conf && unzip IEDriverServer_64.zip && mv IEDriverServer.exe IEDriverServer_64.exe && rm IEDriverServer_64.zip
+
 
 Tools/jre-windows-i586.exe:
 	echo "You may need to download Java for Windows from http://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html "
@@ -59,3 +63,7 @@ Tools/firefox.exe:
 Tools/chrome.exe:
 	echo "You may need to download chrome for windows from https://www.google.com/chrome/browser/desktop/index.html?standalone=1"
 	test -f ChromeStandaloneSetup.exe && mv ChromeStandaloneSetup.exe $@
+
+Tools/selenium_conf/chromedriver.exe:
+	curl -o $@ -L "http://chromedriver.storage.googleapis.com/2.13/chromedriver_win32.zip"
+	cd Tools/selenium_conf && unzip chromedriver_win32.zip && rm chromedriver_win32.zip

@@ -216,10 +216,13 @@ set_network_config() {
   log "Setting network bridge ${nic_bridge}..."
   execute "VBoxManage modifyvm \"${vm_name}\" --nic1 bridged --bridgeadapter1 \"${nic_bridge}\""
   chk error $? "Could not set Bridge"
+}
+
+update_hosts_file() {
   # Create a hosts file
   ifconfig en0 | grep "inet " |awk '{print $2 " hubhost"}' > /tmp/hosts
   # Send it to the VM
-  copyto hosts /tmp/ "C:/Windows/System32/drivers/etc/hosts"
+  copyto hosts /tmp/ "C:/Windows/System32/drivers/etc/"
 }
 
 # Find and set free Port for RDP-Connection.
@@ -443,8 +446,9 @@ install_selenium() {
   copyto "${selenium_jar}" "${selenium_path}" "C:/selenium/"
   chk error $? "Could not install Selenium"
   log "Installing IEDriverServer..."
-  #execute "VBoxManage guestcontrol \"${vm_name}\" copyto \"${selenium_path}IEDriverServer.exe\" C:/Windows/system32/ --username 'IEUser' --password 'Passw0rd!'"
-  copyto "IEDriverServer.exe" "${selenium_path}" "C:/Windows/system32/"
+  execute "VBoxManage guestcontrol \"${vm_name}\" copyto \"${selenium_path}IEDriverServer_32.exe\" C:/Windows/system32/IEDriverServer.exe --username 'IEUser' --password 'Passw0rd!'"
+  #copyto "IEDriverServer_32.exe" "${selenium_path}" "C:/Windows/system32/"
+  #copyto "IEDriverServer_64.exe" "${selenium_path}" "C:/Windows/system32/"
   chk error $? "Could not install IEDriverServer.exe"
   log "Configure Selenium..."
   execute_os_specific config_selenium
@@ -593,6 +597,7 @@ start_vm
 disable_firewall
 create_temp_path
 rename_vm
+update_hosts_file
 set_ie_config
 install_java
 install_firefox
