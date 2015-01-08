@@ -188,6 +188,36 @@ mkvm.sh VMs/IE6\ -\ WinXP.ova --delete "IE6 - WinXP"
 
 We recommend to use a CronJob to recreate the VMs on a regular basis. See ```mkvm_cronjob```. To avoid too much load on the Host we use a Wrapper-Script ```mkvm_cron.sh``` so that only one Appliance gets imported after another.
 
+clients.sh
+----------
+
+This is a utility script to start and stop the VMs and also do some other things.
+
+Run with no parameters it outputs its options
+
+```
+./clients.sh start|stop|reboot|list|update_hosts
+
+update_hosts updates the hosts file to have this machine's IP address as the hub's IP
+```
+
+Start, stop, and reboot, are obvious. List will list the available VMs and their status (running or stopped). Update_hosts will update the IP address of the hub that they connect to.
+
+It will only update the hosts file on VMs that are already running and it will then reboot the VM.
+
+runhub.sh
+---------
+
+This just has the command line for running the hub that the VMs connect to.
+
+Makefile
+--------
+
+The Makefile will try to download all the components that are needed including the modern.ie VMs. It will probably go out of date rather quickly as URLs change, but it saves trawling the web for each little component.
+
+Just run ```make``` or ```make fetch``` to get the various utlities and libraries or ```make fetch_vms``` to get the modern.ie VMs (big download initially and takes time). It won't download files that already exist.
+
+
 Known Problems
 ==============
 
