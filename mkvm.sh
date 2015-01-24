@@ -43,6 +43,8 @@ warning=False
 
 
 copyto() {
+pwd
+ls Tools
   # $1 = filename, $2 = source directory, $3 destination directory
   if [ ! -f "${2}${1}" ]
   then
@@ -213,14 +215,18 @@ import_vm() {
 
 # Set VM Network-Config.
 set_network_config() {
-  log "Setting network bridge ${nic_bridge}..."
-  execute "VBoxManage modifyvm \"${vm_name}\" --nic1 bridged --bridgeadapter1 \"${nic_bridge}\""
+  log "Setting network hostonly ${nic_hostonly}..."
+  execute "VBoxManage modifyvm \"${vm_name}\" --nic1 hostonly --hostonlyadapter1 \"${nic_hostonly}\""
   chk error $? "Could not set Bridge"
+
+  log "Setting network nat ${nic_bridge}..."
+  execute "VBoxManage modifyvm \"${vm_name}\" --nic2 nat"
+  chk error $? "Could not set host-only"
 }
 
 update_hosts_file() {
   # Create a hosts file
-  ifconfig en0 | grep "inet " |awk '{print $2 " hubhost"}' > /tmp/hosts
+  ifconfig ${nic_hostonly} | grep "inet " |awk '{print $2 " hubhost"}' > /tmp/hosts
   # Send it to the VM
   copyto hosts /tmp/ "C:/Windows/System32/drivers/etc/"
 }
